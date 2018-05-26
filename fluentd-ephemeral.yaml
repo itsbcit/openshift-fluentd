@@ -42,7 +42,6 @@ items:
               name: fluentd-etc
             - emptyDir: {}
               name: fluentd-log
-            }
   - apiVersion: v1
     kind: Service
     metadata:
