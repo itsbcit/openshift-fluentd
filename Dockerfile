@@ -15,6 +15,8 @@ RUN chmod 664 /etc/passwd /etc/group
 RUN chown -R root:root /fluentd \
  && chmod 775 /fluentd /fluentd/log
 
+VOLUME /fluentd/log
+
 RUN rm /bin/entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
