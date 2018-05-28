@@ -3,6 +3,9 @@ FROM fluent/fluentd
 ENV RUNUSER fluent
 ENV HOME /home/fluent
 
+RUN gem install \
+        fluent-plugin-splunk-hec
+
 # Add docker-entrypoint script base
 ENV DE_VERSION v1.1
 ADD https://github.com/itsbcit/docker-entrypoint/releases/download/${DE_VERSION}/docker-entrypoint.tar.gz /docker-entrypoint.tar.gz
