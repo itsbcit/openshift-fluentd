@@ -42,8 +42,8 @@ VOLUME /fluentd/log
 
 RUN rm /bin/entrypoint.sh
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
 USER fluent
 EXPOSE 24284
-CMD exec fluentd -c /fluentd/etc/fluent.conf
-# -p /fluentd/plugins $FLUENTD_OPT
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["fluentd", "-c", "/fluentd/etc/fluent.conf"]
