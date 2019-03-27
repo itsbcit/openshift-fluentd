@@ -1,5 +1,7 @@
 FROM fluent/fluentd:v1.3
 
+LABEL maintainer="chriswood.ca@gmail.com"
+
 ENV RUNUSER fluent
 ENV HOME /home/fluent
 
