@@ -1,0 +1,46 @@
+FROM fluent/fluentd:v1.3
+
+ENV RUNUSER fluent
+ENV HOME /home/fluent
+
+RUN apk add --no-cache --update --virtual .build-deps \
+    build-base ruby-dev git
+
+# Standalone Fluentd section
+# http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html
+RUN /usr/bin/fluent-gem install \
+        fluent-plugin-secure-forward
+# RUN /usr/bin/gem install \
+#         fluent-plugin-splunk-ex
+#
+# download source to fix gemspec
+WORKDIR /src/fluent-plugin-splunk-ex
+RUN git clone https://github.com/gtrevg/fluent-plugin-splunk-ex.git .
+RUN sed -i 's/0.10.17/1.3/' fluent-plugin-splunk-ex.gemspec
+RUN gem build fluent-plugin-splunk-ex.gemspec
+RUN gem install fluent-plugin-splunk-ex-1.0.1.gem
+
+RUN gem sources --clear-all && \
+    apk del .build-deps && \
+    rm -rf /src/fluent-plugin-splunk-ex
+
+WORKDIR /
+# Add docker-entrypoint script base
+ENV DE_VERSION v1.3
+ADD https://github.com/itsbcit/docker-entrypoint/releases/download/${DE_VERSION}/docker-entrypoint.tar.gz /docker-entrypoint.tar.gz
+RUN tar zxvf docker-entrypoint.tar.gz && rm -f docker-entrypoint.tar.gz
+RUN chmod -R 555 /docker-entrypoint.*
+
+# Allow resolve-userid.sh script to run
+RUN chmod 664 /etc/passwd /etc/group
+
+RUN chown -R root:root /fluentd \
+ && chmod 775 /fluentd /fluentd/log
+
+VOLUME /fluentd/log
+
+RUN rm /bin/entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+# CMD exec fluentd -c /fluentd/etc/${FLUENTD_CONF} -p /fluentd/plugins $FLUENTD_OPT
