@@ -22,6 +22,9 @@ RUN git clone https://github.com/gtrevg/fluent-plugin-splunk-ex.git . && \
         gem build fluent-plugin-splunk-ex.gemspec && \
         gem install fluent-plugin-splunk-ex-1.0.1.gem
 
+RUN gem install \
+        fluent-plugin-record-modifier
+
 RUN gem sources --clear-all && \
         apk del .build-deps && \
         rm -rf /src/fluent-plugin-splunk-ex
