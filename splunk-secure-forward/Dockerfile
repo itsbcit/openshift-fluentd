@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.3
+FROM fluent/fluentd:v0.12
 
 LABEL maintainer="chriswood.ca@gmail.com"
 
@@ -11,23 +11,23 @@ RUN apk add --no-cache --update --virtual .build-deps \
 # Standalone Fluentd section
 # http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html
 RUN /usr/bin/fluent-gem install \
-        fluent-plugin-splunk-enterprise
+        fluent-plugin-secure-forward
 # RUN /usr/bin/gem install \
 #         fluent-plugin-splunk-ex
 #
-# download source to fix gemspec
-# WORKDIR /src/fluent-plugin-splunk-ex
-# RUN git clone https://github.com/gtrevg/fluent-plugin-splunk-ex.git . && \
-#         sed -i 's/0.10.17/1.3/' fluent-plugin-splunk-ex.gemspec && \
-#         gem build fluent-plugin-splunk-ex.gemspec && \
-#         gem install fluent-plugin-splunk-ex-1.0.1.gem
+#download source to fix gemspec for ruby compatiblity
+WORKDIR /src/fluent-plugin-splunk-ex
+RUN git clone https://github.com/gtrevg/fluent-plugin-splunk-ex.git . && \
+        sed -i 's/0.10.17/0.12.43/' fluent-plugin-splunk-ex.gemspec && \
+        gem build fluent-plugin-splunk-ex.gemspec && \
+        gem install fluent-plugin-splunk-ex-1.0.1.gem
 
 # RUN gem install \
-#         fluent-plugin-record-modifier
+#         fluent-plugin-record-modifier #installs fluentd 1.4
 
-# RUN gem sources --clear-all && \
-#         apk del .build-deps && \
-#         rm -rf /src/fluent-plugin-splunk-ex
+RUN gem sources --clear-all && \
+        apk del .build-deps && \
+        rm -rf /src/fluent-plugin-splunk-ex
 
 WORKDIR /
 # Add docker-entrypoint script base
@@ -48,7 +48,7 @@ VOLUME /fluentd/log
 RUN rm /bin/entrypoint.sh
 
 USER fluent
-EXPOSE 24224
+EXPOSE 24284
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["fluentd", "-c", "/fluentd/etc/fluent.conf"]
