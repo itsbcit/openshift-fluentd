@@ -14,7 +14,8 @@ RUN apk add --no-cache --update --virtual .build-deps \
 # error_class=Encoding::UndefinedConversionError error="\"\\xE2\" from ASCII-8BIT to UTF-8"
 RUN /usr/bin/fluent-gem install \
         fluent-plugin-secure-forward \
-        fluent-plugin-record-modifier:0.6.2
+        fluent-plugin-record-modifier:0.6.2 \
+        fluent-plugin-rewrite-tag-filter:1.6.0
 
 # RUN /usr/bin/gem install \
 #         fluent-plugin-splunk-ex
